@@ -101,6 +101,7 @@
     oneVersePerLine: document.querySelector("#one-verse-per-line"),
     markdownPanel: document.querySelector("#markdown-format-panel"),
     markdownTemplate: document.querySelector("#markdown-template"),
+    markdownPreview: document.querySelector("#markdown-preview-output"),
     tokenButtons: document.querySelectorAll("[data-token]"),
     boldToken: document.querySelector("#bold-token"),
     italicToken: document.querySelector("#italic-token"),
@@ -318,6 +319,51 @@
     });
     dom.boldToken.classList.toggle("active", tokenHasStyle(selectedMarkdownToken, "bold"));
     dom.italicToken.classList.toggle("active", tokenHasStyle(selectedMarkdownToken, "italic"));
+    renderMarkdownPreview();
+  }
+
+  function renderMarkdownPreview() {
+    const markdown = applyMarkdownTemplate(dom.markdownTemplate.value, "Text", "Reference");
+    dom.markdownPreview.textContent = "";
+    markdown.split("\n").forEach((line, index) => {
+      if (index > 0) dom.markdownPreview.append(document.createElement("br"));
+
+      const lineElement = document.createElement("span");
+      const quoteMatch = line.match(/^\s*>\s?(.*)$/);
+      if (quoteMatch) {
+        lineElement.className = "markdown-preview-quote";
+        appendInlineMarkdown(lineElement, quoteMatch[1] || " ");
+      } else {
+        appendInlineMarkdown(lineElement, line || " ");
+      }
+      dom.markdownPreview.append(lineElement);
+    });
+  }
+
+  function appendInlineMarkdown(parent, value) {
+    const emphasisPattern = /(\*\*\*([^*]+?)\*\*\*|\*\*([^*]+?)\*\*|\*([^*]+?)\*)/g;
+    let lastIndex = 0;
+    value.replace(emphasisPattern, (match, all, boldItalic, bold, italic, offset) => {
+      parent.append(document.createTextNode(value.slice(lastIndex, offset)));
+      if (boldItalic) {
+        const strong = document.createElement("strong");
+        const em = document.createElement("em");
+        em.textContent = boldItalic;
+        strong.append(em);
+        parent.append(strong);
+      } else if (bold) {
+        const strong = document.createElement("strong");
+        strong.textContent = bold;
+        parent.append(strong);
+      } else {
+        const em = document.createElement("em");
+        em.textContent = italic;
+        parent.append(em);
+      }
+      lastIndex = offset + match.length;
+      return match;
+    });
+    parent.append(document.createTextNode(value.slice(lastIndex)));
   }
 
   function toggleTokenStyle(token, style) {
