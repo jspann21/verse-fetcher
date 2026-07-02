@@ -305,11 +305,11 @@
   }
 
   function defaultMarkdownTemplate(format) {
-    if (format === "text-ref") return "{Text} - **{Reference}**";
-    if (format === "ref-newline-text") return "**{Reference}**\n{Text}";
-    if (format === "text-newline-ref") return "{Text}\n**{Reference}**";
+    if (format === "text-ref") return "{Text} - {Reference}";
+    if (format === "ref-newline-text") return "{Reference}\n{Text}";
+    if (format === "text-newline-ref") return "{Text}\n{Reference}";
     if (format === "blockquote") return "> {Text}\n>\n> {Reference}";
-    return "**{Reference}** - {Text}";
+    return "{Reference} - {Text}";
   }
 
   function syncMarkdownControls() {
@@ -546,7 +546,7 @@
   }
 
   function applyMarkdownTemplate(template, text, reference) {
-    const safeTemplate = template || "{Text} - **{Reference}**";
+    const safeTemplate = template || "{Text} - {Reference}";
     return replaceMultilinePlaceholder(safeTemplate, /\{text\}/gi, text)
       .replace(/\{reference\}/gi, reference);
   }
