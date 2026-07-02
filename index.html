@@ -1,0 +1,109 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Verse Fetcher</title>
+    <meta
+      name="description"
+      content="Paste any text with Bible references, choose a translation, and copy the fetched verse text."
+    >
+    <link rel="stylesheet" href="styles.css">
+  </head>
+  <body>
+    <main class="app">
+      <header class="masthead">
+        <div class="brand">
+          <span class="brand-icon" aria-hidden="true"></span>
+          <h1>Verse Fetcher</h1>
+        </div>
+      </header>
+
+      <form id="fetch-form" class="tool" autocomplete="off">
+        <section class="input-panel" aria-labelledby="input-title">
+          <div class="section-heading">
+            <h2 id="input-title">Input any text with verse references</h2>
+            <button class="secondary-button" type="button" id="sample-button">Sample</button>
+          </div>
+          <textarea
+            id="reference-input"
+            name="references"
+            spellcheck="false"
+            placeholder="Paste notes, paragraphs, outlines, or plain references. Example:&#10;Life is a gift of God and must be respected. (Exodus 20:13; 23:7; Matthew 5:21; Acts 17:28)"
+            required
+          ></textarea>
+        </section>
+
+        <section class="output-panel" aria-labelledby="output-title">
+          <div class="section-heading">
+            <div>
+              <h2 id="output-title">Output</h2>
+              <p id="status-line" class="status-line">Fetched verses will appear here.</p>
+            </div>
+            <button class="secondary-button" type="button" id="copy-button" disabled>Copy</button>
+          </div>
+          <textarea id="output" spellcheck="false" readonly></textarea>
+        </section>
+
+        <section class="controls" aria-label="Fetch options">
+          <label>
+            Translation
+            <select id="translation-select" name="translation"></select>
+          </label>
+
+          <fieldset>
+            <legend>Output Format</legend>
+            <select id="format-select" name="format" aria-label="Output layout">
+              <option value="ref-text">Reference - Text</option>
+              <option value="text-ref" selected>Text - Reference</option>
+              <option value="ref-newline-text">Reference \n Text</option>
+              <option value="text-newline-ref">Text \n Reference</option>
+              <option value="blockquote">Markdown quote block</option>
+            </select>
+            <label class="radio-row">
+              <input type="checkbox" id="verse-numbers" name="verseNumbers" checked>
+              Include verse numbers
+            </label>
+            <label class="radio-row">
+              <input type="checkbox" id="one-verse-per-line" name="oneVersePerLine">
+              One verse per line
+            </label>
+            <label class="radio-row">
+              <input type="radio" name="mode" value="plain">
+              Plain text
+            </label>
+            <label class="radio-row">
+              <input type="radio" name="mode" value="markdown" checked>
+              Markdown
+            </label>
+            <div id="markdown-format-panel" class="markdown-format-panel">
+              <label for="markdown-template">Markdown Format</label>
+              <p id="markdown-template-help" class="template-help">
+                Select a placeholder, then apply formatting.
+              </p>
+              <div class="markdown-token-row" aria-label="Markdown placeholders">
+                <button type="button" class="token-button active" data-token="Text">{Text}</button>
+                <button type="button" class="token-button" data-token="Reference">{Reference}</button>
+              </div>
+              <div class="template-buttons" aria-label="Markdown formatting">
+                <button type="button" class="secondary-button compact-button" id="bold-token">Bold</button>
+                <button type="button" class="secondary-button compact-button" id="italic-token">Italic</button>
+                <button type="button" class="secondary-button compact-button" id="reset-template">Reset</button>
+              </div>
+              <textarea id="markdown-template" spellcheck="false" aria-describedby="markdown-template-help"></textarea>
+            </div>
+          </fieldset>
+
+          <button class="primary-button" type="submit" id="fetch-button">Fetch verses</button>
+        </section>
+      </form>
+
+      <footer class="app-footer">
+        <a href="https://github.com/Bolls-Bible/bain/blob/master/docs/API.md" target="_blank" rel="noreferrer">Powered by Bolls Life API</a>
+        <a href="https://jspann21.github.io/verse-fetcher/" target="_blank" rel="noreferrer">jspann21.github.io/verse-fetcher</a>
+      </footer>
+    </main>
+
+    <script src="app.js"></script>
+  </body>
+</html>
