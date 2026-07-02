@@ -133,7 +133,7 @@
     dom.copy.addEventListener("click", copyOutput);
     dom.form.addEventListener("submit", fetchVerses);
     dom.format.addEventListener("change", () => {
-      syncMarkdownTemplateWithFormat(false);
+      syncMarkdownTemplateWithFormat(true, true);
       renderCachedOutput();
     });
     dom.verseNumbers.addEventListener("change", renderCachedOutput);
@@ -295,11 +295,15 @@
     syncMarkdownControls();
   }
 
-  function syncMarkdownTemplateWithFormat(force) {
+  function syncMarkdownTemplateWithFormat(force, preserveTokenStyles) {
     const nextDefault = defaultMarkdownTemplate(dom.format.value);
     if (force || !customMarkdownTemplate || dom.markdownTemplate.value === lastDefaultMarkdownTemplate) {
-      dom.markdownTemplate.value = nextDefault;
-      customMarkdownTemplate = false;
+      const tokenStyles = preserveTokenStyles ? {
+        Text: getTokenStyleState("Text"),
+        Reference: getTokenStyleState("Reference")
+      } : null;
+      dom.markdownTemplate.value = tokenStyles ? applyTokenStyles(nextDefault, tokenStyles) : nextDefault;
+      customMarkdownTemplate = dom.markdownTemplate.value !== nextDefault;
     }
     lastDefaultMarkdownTemplate = nextDefault;
     syncMarkdownControls();
@@ -395,6 +399,13 @@
     const replacement = `${marker}{${token}}${marker}`;
     const pattern = new RegExp(`\\*{0,3}\\{${escaped}\\}\\*{0,3}`, "g");
     return template.replace(pattern, replacement);
+  }
+
+  function applyTokenStyles(template, tokenStyles) {
+    return Object.entries(tokenStyles).reduce(
+      (nextTemplate, [token, state]) => setTokenStyleState(nextTemplate, token, state),
+      template
+    );
   }
 
   function markCacheStale() {
