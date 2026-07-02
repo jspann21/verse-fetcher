@@ -20,6 +20,7 @@
     ["LSV", "Literal Standard Version"],
     ["MSG", "The Message"]
   ];
+  const PREFERRED_TRANSLATION_NAMES = new Map(POPULAR_TRANSLATIONS);
 
   const BOOKS = [
     book(1, "Genesis", ["Gen", "Ge", "Gn"]),
@@ -181,17 +182,12 @@
       const english = languages.find((group) => group.language.toLowerCase().includes("english"));
       if (!english) return;
 
-      const popular = new Set(POPULAR_TRANSLATIONS.map(([code]) => code));
-      const merged = POPULAR_TRANSLATIONS.map(([code, fallback]) => {
-        const live = english.translations.find((item) => item.short_name === code);
-        return [code, live ? live.full_name : fallback];
-      });
+      const translations = english.translations.map((item) => [
+        item.short_name,
+        PREFERRED_TRANSLATION_NAMES.get(item.short_name) || item.full_name
+      ]);
 
-      english.translations
-        .filter((item) => !popular.has(item.short_name))
-        .forEach((item) => merged.push([item.short_name, item.full_name]));
-
-      populateTranslations(sortTranslations(merged));
+      populateTranslations(sortTranslations(translations));
     } catch (error) {
       setStatus("Using built-in translation list. Live metadata could not be loaded.");
     }
